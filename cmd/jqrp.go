@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/bauerd/jqrp/proxy"
 	"github.com/bauerd/jqrp/log"
+	"github.com/bauerd/jqrp/proxy"
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 	"strconv"
+	"time"
 )
 
 const usage string = "Usage: jqrp BACKEND"
