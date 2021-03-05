@@ -38,7 +38,7 @@ Consult the jq [manual](https://stedolan.github.io/jq/manual/#Basicfilters) for 
 
 ## Installation
 
-[Pre-built binaries]() and [Docker images]() are available.
+[Pre-built binaries](https://github.com/bauerd/jqrp/releases) and [Docker images](https://hub.docker.com/r/bauerd/jqrp) are available.
 
 ## Usage
 
