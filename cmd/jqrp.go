@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/bauerd/jqrp/proxy"
+	"github.com/bauerd/jqrp/log"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+	"strconv"
 )
 
 const usage string = "Usage: jqrp BACKEND"
@@ -30,20 +32,18 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Failed to allocate compiler")
 		os.Exit(1)
 	}
-	logger := config.Logger()
-	frontend := proxy.NewProxy(url, config.Transport(), evaluator, logger)
+	frontend := proxy.NewProxy(url, config.Transport(), evaluator)
 
-	logger.Debug(fmt.Sprintf("URL: %s", url))
-	logger.Debug(fmt.Sprintf("Port: %d", config.Port))
-	logger.Debug(fmt.Sprintf("Query evaluation timeout: %s", config.EvaluationTimeout))
-	logger.Debug(fmt.Sprintf("Query cache size: %d", config.CacheSize))
-	logger.Debug(fmt.Sprintf("Frontend read timeout: %s", config.ReadTimeout))
-	logger.Debug(fmt.Sprintf("Frontend write timeout: %s", config.WriteTimeout))
-	logger.Debug(fmt.Sprintf("Backend TCP dial timeout: %s", config.DialTimeout))
-	logger.Debug(fmt.Sprintf("Backend TLS handshake timout: %s", config.TLSHandshakeTimeout))
-	logger.Debug(fmt.Sprintf("Backend response header timeout: %s", config.ResponseHeaderTimeout))
-	logger.Debug(fmt.Sprintf("Backend 100-continue timeout: %s", config.ExpectContinueTimeout))
-	logger.Debug(fmt.Sprintf("Log level: %s", logger.Level))
+	log.ConfigValue("URL", url.String())
+	log.ConfigValue("Port", strconv.Itoa(config.Port))
+	log.ConfigValue("Query evaluation timeout", config.EvaluationTimeout.String())
+	log.ConfigValue("Query cache size", strconv.Itoa(config.CacheSize))
+	log.ConfigValue("Frontend read timeout", config.ReadTimeout.String())
+	log.ConfigValue("Frontend write timeout", config.WriteTimeout.String())
+	log.ConfigValue("Backend TCP dial timeout", config.DialTimeout.String())
+	log.ConfigValue("Backend TLS handshake timout", config.TLSHandshakeTimeout.String())
+	log.ConfigValue("Backend response header timeout", config.ResponseHeaderTimeout.String())
+	log.ConfigValue("Backend 100-continue timeout", config.ExpectContinueTimeout.String())
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", config.Port),
@@ -51,5 +51,5 @@ func main() {
 		ReadTimeout:  time.Duration(config.ReadTimeout) * time.Millisecond,
 		WriteTimeout: time.Duration(config.WriteTimeout) * time.Millisecond,
 	}
-	logger.Error(server.ListenAndServe().Error())
+	server.ListenAndServe().Error()
 }
