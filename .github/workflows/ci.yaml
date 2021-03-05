@@ -1,0 +1,70 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Go
+        run: |
+          curl -L https://golang.org/dl/go1.15.linux-amd64.tar.gz | sudo tar xz -C /usr/local
+          sudo ln -s /usr/local/go/bin/* /usr/local/bin
+
+      - name: Check formatting
+        run: make checkformat
+
+      - name: Compile Linux/amd64
+        run: make bin/jqrp.linux-amd64
+
+      - name: Compile Linux/arm64
+        run: make bin/jqrp.linux-arm64
+
+      - name: Compile Darwin/amd64
+        run: make bin/jqrp.darwin-amd64
+
+      - name: Produce Linux/amd64 artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: jqrp.linux-amd64
+          path: bin/jqrp.linux-amd64
+
+      - name: Produce Linux/arm64 artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: jqrp.linux-arm64
+          path: bin/jqrp.linux-arm64
+
+      - name: Produce Darwin/amd64 artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: jqrp.darwin-amd64
+          path: bin/jqrp.darwin-amd64
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t bauerd/jqrp .
+
+      - name: Tag SHA Docker image
+        run: docker tag bauerd/jqrp bauerd/jqrp:$GITHUB_SHA
+
+      - name: Tag branch Docker image
+        run: docker tag bauerd/jqrp bauerd/jqrp:$(git rev-parse --abbrev-ref HEAD)
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u bauerd --password-stdin
+
+      - name: Push SHA Docker image
+        run: docker push bauerd/jqrp:$GITHUB_SHA
+
+      - name: Push branch Docker image
+        run: docker push bauerd/jqrp:$(git rev-parse --abbrev-ref HEAD)
