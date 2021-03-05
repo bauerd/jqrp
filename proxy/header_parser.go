@@ -9,7 +9,7 @@ import (
 
 // HeaderParser attaches the JQ request header value as a context key on client
 // requests.
-var HeaderParser = func(f http.HandlerFunc, logger *log.Logger) http.HandlerFunc {
+var HeaderParser = func(f http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		mediaType, _, err := mime.ParseMediaType(r.Header.Get("Accept"))
 		if err != nil || mediaType != "application/json" {
@@ -22,7 +22,7 @@ var HeaderParser = func(f http.HandlerFunc, logger *log.Logger) http.HandlerFunc
 			f(w, r)
 			return
 		}
-		log.Query(logger, r, rawQuery)
+		log.Query(r, rawQuery)
 		f(w, r.WithContext(context.WithValue(r.Context(), RawQueryContextKey, rawQuery)))
 	}
 }

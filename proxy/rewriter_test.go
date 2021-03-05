@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"bytes"
-	"github.com/bauerd/jqrp/log"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -15,8 +14,7 @@ func TestRewriterEmptyMultipleResults(t *testing.T) {
 	req := http.Request{URL: url}
 	res := http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte{})), Request: &req}
 	results := []interface{}{1, 2}
-	logger := log.New(log.Error)
-	err := Rewriter(logger)(results, []byte{}, &res)
+	err := Rewriter(results, []byte{}, &res)
 	if err != nil {
 		t.Errorf("Rewriting failed")
 	}
@@ -35,8 +33,7 @@ func TestRewriterEmptySingleComplexResult(t *testing.T) {
 	req := http.Request{URL: url}
 	res := http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte{})), Request: &req}
 	results := []interface{}{map[string]string{"hello": "world"}}
-	logger := log.New(log.Error)
-	err := Rewriter(logger)(results, []byte{}, &res)
+	err := Rewriter(results, []byte{}, &res)
 	if err != nil {
 		t.Errorf("Rewriting failed")
 	}
@@ -55,8 +52,7 @@ func TestRewriterEmptySinglePrimitiveResult(t *testing.T) {
 	req := http.Request{URL: url}
 	res := http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte{})), Request: &req}
 	results := []interface{}{1}
-	logger := log.New(log.Error)
-	err := Rewriter(logger)(results, []byte{}, &res)
+	err := Rewriter(results, []byte{}, &res)
 	if err != ErrIllegalQueryResult {
 		t.Errorf("Rewriting succeeded")
 	}
@@ -75,8 +71,7 @@ func TestRewriterEmptyWithoutResult(t *testing.T) {
 	req := http.Request{URL: url}
 	res := http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte{})), Request: &req}
 	results := []interface{}{}
-	logger := log.New(log.Error)
-	err := Rewriter(logger)(results, []byte("[]"), &res)
+	err := Rewriter(results, []byte("[]"), &res)
 	if err != nil {
 		t.Errorf("Rewriting failed")
 	}

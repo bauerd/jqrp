@@ -2,7 +2,8 @@ package proxy
 
 import (
 	"github.com/bauerd/jqrp/jq"
-	"github.com/bauerd/jqrp/log"
+	zerolog "github.com/rs/zerolog"
+	log "github.com/rs/zerolog/log"
 	"net"
 	"net/http"
 	"os"
@@ -22,11 +23,12 @@ type Config struct {
 	TLSHandshakeTimeout   time.Duration
 	ResponseHeaderTimeout time.Duration
 	ExpectContinueTimeout time.Duration
-	Level                 log.Level
 }
 
 // NewConfig returns a configuration read from environment variables.
 func NewConfig() *Config {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
 	return &Config{
 		Port:                  intFromEnvironment("PORT", 8989),
 		CacheSize:             intFromEnvironment("CACHE_SIZE", 512),
@@ -54,20 +56,6 @@ func intFromEnvironment(key string, fallback int) int {
 
 func durationFromEnvironment(key string, fallback int) time.Duration {
 	return time.Duration(intFromEnvironment(key, fallback)) * time.Millisecond
-}
-
-func levelFromEnvironment(key string, fallback log.Level) log.Level {
-	if value, ok := os.LookupEnv(key); ok {
-		switch value {
-		case "debug":
-			return log.Debug
-		case "info":
-			return log.Info
-		case "error":
-			return log.Error
-		}
-	}
-	return fallback
 }
 
 // Transport returns an HTTP transport with timeouts set.
@@ -104,9 +92,4 @@ func (c *Config) compiler() (jq.Compiler, error) {
 		return nil, err
 	}
 	return cachedCompiler.Compiler, nil
-}
-
-// Logger returns a logger with level set.
-func (c *Config) Logger() *log.Logger {
-	return log.New(levelFromEnvironment("LOG_LEVEL", log.Info))
 }
