@@ -41,6 +41,13 @@ Consult the jq [manual](https://stedolan.github.io/jq/manual/#Basicfilters) for 
 
 [Pre-built binaries](https://github.com/bauerd/jqrp/releases) and [Docker images](https://hub.docker.com/r/bauerd/jqrp) are available.
 
+### Building manually
+
+```
+$ git clone https://github.com/bauerd/jqrp .
+$ make # Compiles to ./bin/
+```
+
 ## Usage
 
 ```
