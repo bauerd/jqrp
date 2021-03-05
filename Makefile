@@ -1,4 +1,4 @@
-.PHONY: clean test lint format checkformat
+.PHONY: clean ci test lint format checkformat
 
 LINUX_AMD64=GOOS=linux GOARCH=amd64
 LINUX_ARM64=GOOS=linux GOARCH=arm
@@ -21,6 +21,8 @@ bin/jqrp.darwin-amd64: bin */**.go
 
 clean:
 	rm -rf bin
+
+ci: test lint
 
 test:
 	go test -v ./...
