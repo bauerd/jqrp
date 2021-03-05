@@ -1,8 +1,8 @@
 package proxy
 
 import (
-	"testing"
 	"github.com/bauerd/jqrp/jq"
+	"testing"
 )
 
 func TestConfigEvaluatorWithoutTimeout(t *testing.T) {
