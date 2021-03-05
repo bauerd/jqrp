@@ -1,6 +1,7 @@
 # jqrp -- jq Reverse Proxy
 
 ![CI status](https://github.com/bauerd/jqrp/actions/workflows/ci.yaml/badge.svg?branch=master)
+[![Go Reference](https://pkg.go.dev/badge/github.com/bauerd/jqrp.svg)](https://pkg.go.dev/github.com/bauerd/jqrp)
 
 HTTP reverse proxy that mutates JSON responses according to client-supplied [jq queries](https://stedolan.github.io/jq).
 
