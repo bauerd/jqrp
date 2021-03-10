@@ -119,13 +119,11 @@ jqrp can be configured via environment variables.
 
 ## Security Considerations
 
+* jq is Turing-complete, i.e. evaluation of user-supplied queries may loop indefinitely. jqrp affords setting an evaluation timeout, configurable with the `EVAL_TIMEOUT` environment variable. Requests with queries exceeding the evaluation timeout get closed with status code 408.
+
 * jqrp uses [gojq](https://github.com/itchyny/gojq), a re-implementation of jq. Because jqrp feeds user input untouched to gojq, its security properties depend mainly on gojq.
 
 * If gojq panics on query evaluation, the jqrp process exits.
-
-* Queries may be prohibitively expensive to evaluate. A malicious user may intentionally craft queries that take a long time to evaluate. Therefore jqrp affords setting an evaluation timeout, configurable with the `EVAL_TIMEOUT` environment variable. Requests with queries exceeding the evaluation timeout get closed with status code 408.
-
-* The [original jq](http://stedolan.github.io/jq) query language is Turing-complete, i.e. evaluation of user-supplied queries may loop indefinitely. jqrp uses gojq with all its [compiler options](https://github.com/itchyny/gojq#usage-as-a-library) disabled. Query evaluation in jqrp is likely not Turing-complete.
 
 * Consider stripping the `JQ` header for unauthenticated/unauthorized requests in front of jqrp.
 
